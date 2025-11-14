@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>EBeep - E Ink Matrix Client (Standalone)</title>
+  <style>
+    /* E Ink Optimized Styles - Pure Black & White */
+    * { margin: 0; padding: 0; box-sizing: border-box; animation: none !important; transition: none !important; }
+    :root { --color-bg: #FFF; --color-fg: #000; --border: 2px; }
+    body { font-family: 'Courier New', monospace; font-size: 16px; line-height: 1.6; color: var(--color-fg); background: var(--color-bg); -webkit-font-smoothing: none; }
+    .container { display: flex; width: 100vw; height: 100vh; border: var(--border) solid var(--color-fg); }
+    .sidebar { width: 30%; border-right: var(--border) solid var(--color-fg); overflow-y: auto; }
+    .main { width: 70%; display: flex; flex-direction: column; }
+    .header { padding: 16px; border-bottom: var(--border) solid var(--color-fg); font-weight: bold; font-size: 20px; }
+    input, textarea, button { font-family: inherit; font-size: 16px; border: var(--border) solid var(--color-fg); padding: 8px; background: var(--color-bg); color: var(--color-fg); }
+    button { font-weight: bold; cursor: pointer; padding: 8px 16px; }
+    button:hover { background: var(--color-fg); color: var(--color-bg); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 8px; }
+    .form-group input { width: 100%; }
+    .room-item { padding: 16px; border-bottom: 1px solid var(--color-fg); cursor: pointer; }
+    .room-item.selected { background: var(--color-fg); color: var(--color-bg); }
+    .room-item.unread { font-weight: bold; }
+    .messages { flex: 1; overflow-y: auto; padding: 16px; }
+    .message { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--color-fg); }
+    .message-sender { font-weight: bold; margin-bottom: 4px; }
+    .message-input { border-top: var(--border) solid var(--color-fg); padding: 16px; display: flex; gap: 16px; }
+    .message-input textarea { flex: 1; resize: vertical; min-height: 60px; }
+    .login { display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh; padding: 24px; }
+    .login-form { max-width: 500px; width: 100%; border: var(--border) solid var(--color-fg); padding: 24px; }
+    .error { padding: 16px; border: var(--border) solid var(--color-fg); margin-bottom: 16px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    // Simple standalone Matrix client for E Ink displays
+    // Note: This requires loading the Matrix SDK from CDN
+
+    import * as matrixcs from 'https://cdn.jsdelivr.net/npm/matrix-js-sdk@31/lib/browser-index.js';
+
+    const app = document.getElementById('app');
+    let client = null;
+    let selectedRoomId = null;
+
+    // Render login screen
+    function renderLogin(error = null) {
+      app.innerHTML = `
+        <div class="login">
+          <form class="login-form" onsubmit="handleLogin(event)">
+            <h1>EBeep</h1>
+            <p>E Ink Matrix Client</p>
+            ${error ? `<div class="error">${error}</div>` : ''}
+            <div class="form-group">
+              <label>Homeserver</label>
+              <input type="text" id="homeserver" value="matrix.org" required>
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="username" placeholder="@user:matrix.org" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      `;
+    }
+
+    // Render main app
+    function renderApp() {
+      app.innerHTML = `
+        <div class="container">
+          <div class="sidebar">
+            <div class="header">
+              EBeep
+              <button onclick="handleLogout()" style="float: right; font-size: 14px;">Logout</button>
+            </div>
+            <div id="room-list"></div>
+          </div>
+          <div class="main">
+            <div class="header" id="room-name">Select a conversation</div>
+            <div class="messages" id="messages"></div>
+            <div class="message-input ${selectedRoomId ? '' : 'hidden'}" id="input-area">
+              <textarea id="message-input" placeholder="Type a message..."></textarea>
+              <button onclick="handleSendMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      `;
+      updateRoomList();
+    }
+
+    // Update room list
+    function updateRoomList() {
+      if (!client) return;
+      const rooms = client.getRooms();
+      const roomList = document.getElementById('room-list');
+      if (!roomList) return;
+
+      roomList.innerHTML = rooms.map(room => {
+        const name = room.name || room.roomId;
+        const unread = room.getUnreadNotificationCount('total') || 0;
+        return `
+          <div class="room-item ${selectedRoomId === room.roomId ? 'selected' : ''} ${unread > 0 ? 'unread' : ''}"
+               onclick="handleSelectRoom('${room.roomId}')">
+            ${name} ${unread > 0 ? `(${unread})` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Update messages
+    function updateMessages() {
+      if (!client || !selectedRoomId) return;
+      const room = client.getRoom(selectedRoomId);
+      if (!room) return;
+
+      const messagesEl = document.getElementById('messages');
+      const roomNameEl = document.getElementById('room-name');
+      const inputArea = document.getElementById('input-area');
+
+      if (roomNameEl) roomNameEl.textContent = room.name || room.roomId;
+      if (inputArea) inputArea.classList.remove('hidden');
+
+      const timeline = room.getLiveTimeline().getEvents();
+      const messages = timeline
+        .filter(e => e.getType() === 'm.room.message' && e.getContent().msgtype === 'm.text')
+        .map(e => {
+          const sender = room.getMember(e.getSender())?.name || e.getSender();
+          return `
+            <div class="message">
+              <div class="message-sender">${sender}</div>
+              <div>${e.getContent().body}</div>
+            </div>
+          `;
+        });
+
+      if (messagesEl) {
+        messagesEl.innerHTML = messages.join('');
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      // Mark as read
+      const lastEvent = timeline[timeline.length - 1];
+      if (lastEvent) {
+        client.sendReadReceipt(lastEvent).catch(console.error);
+      }
+    }
+
+    // Handlers
+    window.handleLogin = async (e) => {
+      e.preventDefault();
+      const homeserver = document.getElementById('homeserver').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const baseUrl = homeserver.startsWith('http') ? homeserver : `https://${homeserver}`;
+        const tempClient = matrixcs.createClient({ baseUrl });
+        const response = await tempClient.login('m.login.password', { user: username, password });
+
+        client = matrixcs.createClient({
+          baseUrl,
+          accessToken: response.access_token,
+          userId: response.user_id,
+        });
+
+        // Save session
+        localStorage.setItem('matrix_session', JSON.stringify({
+          baseUrl,
+          accessToken: response.access_token,
+          userId: response.user_id,
+        }));
+
+        client.on('sync', (state) => {
+          if (state === 'PREPARED') {
+            renderApp();
+            updateRoomList();
+          }
+        });
+
+        client.on('Room.timeline', updateRoomList);
+        client.on('Room.timeline', () => {
+          if (selectedRoomId) updateMessages();
+        });
+
+        await client.startClient({ initialSyncLimit: 10 });
+        renderApp();
+      } catch (err) {
+        renderLogin(err.message || 'Login failed');
+      }
+    };
+
+    window.handleLogout = async () => {
+      if (client) {
+        await client.logout();
+        client.stopClient();
+      }
+      localStorage.removeItem('matrix_session');
+      client = null;
+      selectedRoomId = null;
+      renderLogin();
+    };
+
+    window.handleSelectRoom = (roomId) => {
+      selectedRoomId = roomId;
+      updateRoomList();
+      updateMessages();
+    };
+
+    window.handleSendMessage = async () => {
+      const input = document.getElementById('message-input');
+      if (!input || !client || !selectedRoomId) return;
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      try {
+        await client.sendTextMessage(selectedRoomId, text);
+        input.value = '';
+      } catch (err) {
+        alert('Failed to send message');
+      }
+    };
+
+    // Auto-restore session
+    const session = localStorage.getItem('matrix_session');
+    if (session) {
+      try {
+        const { baseUrl, accessToken, userId } = JSON.parse(session);
+        client = matrixcs.createClient({ baseUrl, accessToken, userId });
+
+        client.on('sync', (state) => {
+          if (state === 'PREPARED') {
+            renderApp();
+            updateRoomList();
+          }
+        });
+
+        client.on('Room.timeline', updateRoomList);
+        client.on('Room.timeline', () => {
+          if (selectedRoomId) updateMessages();
+        });
+
+        client.startClient({ initialSyncLimit: 10 });
+        renderApp();
+      } catch {
+        renderLogin();
+      }
+    } else {
+      renderLogin();
+    }
+
+    // Handle Enter key in message input
+    document.addEventListener('keydown', (e) => {
+      const input = document.getElementById('message-input');
+      if (e.target === input && e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

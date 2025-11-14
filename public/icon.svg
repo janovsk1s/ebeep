@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#FFFFFF"/>
+  <rect x="64" y="64" width="384" height="384" fill="#000000"/>
+  <rect x="80" y="80" width="352" height="352" fill="#FFFFFF"/>
+  <path d="M 160 200 L 160 280 L 200 280 L 200 240 L 240 240 L 240 280 L 280 280 L 280 200 L 240 200 L 240 240 L 200 240 L 200 200 Z" fill="#000000"/>
+  <rect x="320" y="200" width="40" height="80" fill="#000000"/>
+  <text x="256" y="400" font-family="monospace" font-size="48" font-weight="bold" text-anchor="middle" fill="#000000">EBEEP</text>
+</svg>

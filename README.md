@@ -2,6 +2,43 @@
 
 A React web application for Beeper/Matrix messaging protocol, specifically optimized for E Ink displays.
 
+## Quick Install
+
+### 🚀 Easiest: Standalone Single File
+
+Download `standalone.html` from this repo and open it in any browser. That's it!
+- No installation needed
+- No build step required
+- Works offline after first load
+- Just double-click to open
+
+### 📱 Install as PWA (Progressive Web App)
+
+Once deployed:
+1. Visit the URL on your E Ink device
+2. Tap browser menu → "Install App" or "Add to Home Screen"
+3. Use as standalone app with offline support
+
+### 🔧 Deploy Your Own
+
+**Quick Deploy to GitHub Pages:**
+```bash
+npm install
+npm run build
+npm run deploy
+```
+
+**Or use any static host:**
+- Netlify: Drag `dist/` folder to netlify.com/drop
+- Vercel: `vercel deploy dist/`
+- Any web server: Copy `dist/` contents
+
+**See [INSTALL.md](INSTALL.md) for detailed installation options including:**
+- Sideloading to E Ink devices
+- Local file access
+- Custom domain setup
+- Device-specific instructions
+
 ## Features
 
 - **Pure Black & White UI**: No grays or colors, optimized for E Ink contrast
@@ -38,39 +75,29 @@ A React web application for Beeper/Matrix messaging protocol, specifically optim
 
 ## Prerequisites
 
-- Node.js 18+ and npm
-- A Matrix/Beeper account
-- Modern web browser
+- **For Standalone Version**: Any modern browser (Chrome, Edge, Safari, Firefox)
+- **For Building**: Node.js 18+ and npm
+- **For Usage**: Matrix/Beeper account
 
-## Installation
+## Development
 
-1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd ebeep
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
-
-3. Start the development server:
-```bash
 npm run dev
 ```
 
-4. Open http://localhost:3000 in your browser
+Open http://localhost:3000 in your browser.
 
-## Building for Production
-
-Build the application for static hosting:
+## Building
 
 ```bash
-npm run build
+npm run build    # Builds to dist/ folder
+npm run preview  # Preview production build
 ```
 
-The built files will be in the `dist/` directory. You can deploy these to any static hosting service (Netlify, Vercel, GitHub Pages, etc.).
+**For detailed installation instructions** including PWA installation, sideloading to E Ink devices, deployment options, and device-specific guides, see **[INSTALL.md](INSTALL.md)**.
 
 ## Usage
 
