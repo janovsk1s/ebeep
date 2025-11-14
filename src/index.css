@@ -1,0 +1,328 @@
+/* E Ink Optimized Styles */
+/* Pure black and white, no grays, no colors */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #FFFFFF;
+  --color-fg: #000000;
+  --border-width: 2px;
+  --font-size-base: 16px;
+  --font-size-large: 20px;
+  --font-size-xlarge: 24px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* Disable all animations and transitions */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Typography */
+h1 {
+  font-size: var(--font-size-xlarge);
+  font-weight: bold;
+  margin-bottom: var(--spacing-md);
+}
+
+h2 {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Input styles */
+input,
+textarea,
+button {
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  border: var(--border-width) solid var(--color-fg);
+  padding: var(--spacing-sm);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-width: 3px;
+}
+
+button {
+  cursor: pointer;
+  font-weight: bold;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+button:hover {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* Layout */
+.app-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  border: var(--border-width) solid var(--color-fg);
+}
+
+.conversation-list {
+  width: 30%;
+  height: 100%;
+  border-right: var(--border-width) solid var(--color-fg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.conversation-list-header {
+  padding: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--color-fg);
+}
+
+.conversation-list-search {
+  padding: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--color-fg);
+}
+
+.conversation-list-search input {
+  width: 100%;
+}
+
+.conversation-list-items {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.conversation-item {
+  padding: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--color-fg);
+  cursor: pointer;
+}
+
+.conversation-item.selected {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+}
+
+.conversation-item.unread {
+  font-weight: bold;
+}
+
+.conversation-item-name {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.conversation-item-preview {
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation-item-unread {
+  display: inline-block;
+  margin-left: var(--spacing-sm);
+  font-weight: bold;
+}
+
+/* Message view */
+.message-view {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-view-header {
+  padding: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--color-fg);
+}
+
+.message-view-title {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--spacing-md);
+}
+
+.message-item {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-fg);
+}
+
+.message-item:last-child {
+  border-bottom: none;
+}
+
+.message-sender {
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.message-content {
+  margin-bottom: var(--spacing-sm);
+  word-wrap: break-word;
+}
+
+.message-time {
+  font-size: 14px;
+}
+
+.message-input-container {
+  border-top: var(--border-width) solid var(--color-fg);
+  padding: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.message-input-container textarea {
+  flex: 1;
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Login screen */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  padding: var(--spacing-lg);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 500px;
+  border: var(--border-width) solid var(--color-fg);
+  padding: var(--spacing-lg);
+}
+
+.login-form h1 {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-group input {
+  width: 100%;
+}
+
+.form-actions {
+  margin-top: var(--spacing-lg);
+}
+
+.form-actions button {
+  width: 100%;
+}
+
+.error-message {
+  padding: var(--spacing-md);
+  border: var(--border-width) solid var(--color-fg);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-large);
+  font-weight: bold;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-large);
+  text-align: center;
+}
+
+/* Scrollbar styles for E Ink */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--color-fg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-fg);
+  border: var(--border-width) solid var(--color-bg);
+}
+
+/* Keyboard navigation focus styles */
+*:focus-visible {
+  outline: 3px solid var(--color-fg);
+  outline-offset: 2px;
+}
