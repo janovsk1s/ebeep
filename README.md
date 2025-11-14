@@ -1,6 +1,23 @@
 # EBeep - E Ink Optimized Matrix Client
 
-A React web application for Beeper/Matrix messaging protocol, specifically optimized for E Ink displays.
+A React web application for Beeper/Matrix messaging protocol, specifically optimized for E Ink displays and phones.
+
+**💬 Works with Signal, Instagram DMs, WhatsApp, Telegram** and 10+ platforms via Beeper!
+
+**📱 Perfect for E Ink phones** like Mudita Kompakt, Boox, and reMarkable!
+
+## 🚀 Quick Start for Phones
+
+**Want Signal + Instagram on your Mudita Kompakt?**
+
+1. **Setup Beeper** (on computer): https://beeper.com - Connect Signal, Instagram, etc.
+2. **Run setup script**: `./phone-setup.sh` - Choose your installation method
+3. **Open on phone**: Visit URL or open file - Install as PWA
+4. **Login**: Use Beeper credentials - All messages in one app!
+
+📖 **Detailed guides:**
+- **[MUDITA-KOMPAKT.md](MUDITA-KOMPAKT.md)** - Complete phone setup guide
+- **[BEEPER.md](BEEPER.md)** - Signal/Instagram/WhatsApp integration
 
 ## Quick Install
 
@@ -41,13 +58,28 @@ npm run deploy
 
 ## Features
 
+### Platform Support
+- **Signal Messages** via Beeper bridge
+- **Instagram DMs** via Beeper bridge
+- **WhatsApp, Telegram, Discord** and 10+ more via Beeper
+- **Native Matrix** rooms and direct messages
+- **All platforms in one app** - unified inbox
+
+### E Ink Optimization
 - **Pure Black & White UI**: No grays or colors, optimized for E Ink contrast
 - **Minimized Screen Refreshes**: Batched UI updates (2-3 second intervals)
-- **Large, Readable Fonts**: 16px minimum for body text
+- **Large, Readable Fonts**: 16px minimum for body text, auto-scales on phones
 - **No Animations**: All transitions and animations disabled
+- **Mobile Responsive**: Single column on portrait, split view on landscape
+- **Touch-Friendly**: Large buttons (48px min) for E Ink phones
+
+### Core Features
+- **Send/Receive Messages**: Text messages across all platforms
+- **Unread Counts**: Bold conversations with counts
+- **Search**: Find conversations quickly
 - **Keyboard Navigation**: Full keyboard support for accessibility
-- **Core Messaging**: Send/receive text messages, unread counts, search
-- **Two-Column Layout**: 30% conversation list, 70% message view
+- **Offline Support**: PWA works offline after first load
+- **Two-Column Layout**: 30% conversation list, 70% message view (desktop)
 - **Static Hosting Ready**: Single-page application for easy deployment
 
 ## E Ink Optimizations
@@ -72,6 +104,14 @@ npm run deploy
 - Font smoothing disabled
 - Text rendering optimized for legibility
 - Focus indicators with clear borders
+
+### Mobile & Phone Support
+- **Responsive Layout**: Adapts to phone screens automatically
+- **Portrait Mode**: Full-screen conversations, tap to view messages, back button to list
+- **Landscape Mode**: Split view (conversations left, messages right)
+- **Touch Targets**: 48px minimum for easy tapping on E Ink
+- **Mudita Kompakt**: Specifically optimized for this E Ink phone
+- **Works Offline**: PWA caches app for offline use
 
 ## Prerequisites
 

@@ -8,9 +8,10 @@ import { ClientEvent, RoomEvent } from 'matrix-js-sdk';
 interface ConversationListProps {
   selectedRoomId: string | null;
   onSelectRoom: (roomId: string) => void;
+  className?: string;
 }
 
-export function ConversationList({ selectedRoomId, onSelectRoom }: ConversationListProps) {
+export function ConversationList({ selectedRoomId, onSelectRoom, className = '' }: ConversationListProps) {
   const { client, logout } = useMatrixClient();
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,7 +93,7 @@ export function ConversationList({ selectedRoomId, onSelectRoom }: ConversationL
 
   if (isLoading) {
     return (
-      <div className="conversation-list">
+      <div className={`conversation-list ${className}`}>
         <div className="conversation-list-header">
           <h1>EBeep</h1>
           <button onClick={logout}>Logout</button>
@@ -103,7 +104,7 @@ export function ConversationList({ selectedRoomId, onSelectRoom }: ConversationL
   }
 
   return (
-    <div className="conversation-list">
+    <div className={`conversation-list ${className}`}>
       <div className="conversation-list-header">
         <h1>EBeep</h1>
         <button onClick={logout}>Logout</button>

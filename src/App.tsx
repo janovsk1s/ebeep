@@ -8,6 +8,10 @@ function App() {
   const { isLoggedIn, isLoading } = useMatrixClient();
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
+  const handleBackToList = () => {
+    setSelectedRoomId(null);
+  };
+
   if (isLoading) {
     return (
       <div className="loading-container">
@@ -25,8 +29,13 @@ function App() {
       <ConversationList
         selectedRoomId={selectedRoomId}
         onSelectRoom={setSelectedRoomId}
+        className={selectedRoomId ? 'has-selection' : ''}
       />
-      <MessageView roomId={selectedRoomId} />
+      <MessageView
+        roomId={selectedRoomId}
+        onBack={handleBackToList}
+        className={selectedRoomId ? 'active' : ''}
+      />
     </div>
   );
 }

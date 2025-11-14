@@ -7,9 +7,11 @@ import { RoomEvent, EventType } from 'matrix-js-sdk';
 
 interface MessageViewProps {
   roomId: string | null;
+  onBack?: () => void;
+  className?: string;
 }
 
-export function MessageView({ roomId }: MessageViewProps) {
+export function MessageView({ roomId, onBack, className = '' }: MessageViewProps) {
   const { client } = useMatrixClient();
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [messageText, setMessageText] = useState('');
@@ -116,15 +118,20 @@ export function MessageView({ roomId }: MessageViewProps) {
 
   if (!roomId) {
     return (
-      <div className="message-view">
+      <div className={`message-view ${className}`}>
         <div className="empty-state">Select a conversation to start</div>
       </div>
     );
   }
 
   return (
-    <div className="message-view">
+    <div className={`message-view ${className}`}>
       <div className="message-view-header">
+        {onBack && (
+          <button className="mobile-back-button" onClick={onBack}>
+            ← Back to conversations
+          </button>
+        )}
         <div className="message-view-title">{roomName || 'Loading...'}</div>
       </div>
 
